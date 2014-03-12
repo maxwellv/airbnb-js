@@ -1,0 +1,16 @@
+extends ../shared/template
+
+block content
+  h1= title
+  form(action='/register', method='post')
+    fieldset
+      legend Registration form
+      label Email address
+      input(type='email', name='email')
+      label Password
+      input(type='password', name='password')
+      label Role (host or guest)
+      select(name='role')
+        option(value='host') Host
+        option(value='guest') Guest
+      button Register
