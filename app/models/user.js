@@ -4,6 +4,7 @@ var bcrypt = require('bcrypt');
 //var Mongo = require('mongodb');
 var User;
 var users = global.nss.db.collection('users');
+var email = require('../lib/chyld-email');
 //var fs = require('fs');
 //var path = require('path');
 
@@ -20,11 +21,13 @@ User.prototype.register = function(fn){
     self.password = hashed;
     dupeCheck(self.email, function(dupeResult){
       if (dupeResult){ //dupeCheck will return true if there is NOT a duplicate email in the DB
-        insert(self, function(err){
-          fn(err);
+        insert(self, function(err, inserted){
+          email.sendWelcome({to:self.email}, function(err, body){
+            fn(err, body);
+          });
         });
       } else {
-        fn(new Error('You tried to register a duplicate user.'));
+        fn('You tried to register a duplicate user.');
       }
     });
   });
@@ -43,7 +46,7 @@ function hashPassword(password, fn){
 }
 
 function dupeCheck(email, fn){
-  users.findOne({email: email}, function(foundUser){
+  users.findOne({email: email}, function(err, foundUser){
     if (foundUser === null){
       fn(true);
     } else {
@@ -51,4 +54,3 @@ function dupeCheck(email, fn){
     }
   });
 }
-

@@ -17,7 +17,7 @@ describe('User', function(){
 
   beforeEach(function(done){
     global.nss.db.dropDatabase(function(err, result){
-      sue = new User({email: 'sue@nomail.com', role:'host', password:'1234'});
+      sue = new User({email: 'max.vance+SUEEMAIL@gmail.com', role:'host', password:'1234'});
       sue.register(function(err){
         done();
       });
@@ -37,12 +37,14 @@ describe('User', function(){
 
   describe('register', function(){
     it('should register a new user', function(done){
-      var u1 = new User({email: 'bob@nomail.com', role:'host', password:'1234'});
-      u1.register(function(err){
+      var u1 = new User({email: 'max.vance+BOBEMAIL@gmail.com', role:'host', password:'1234'});
+      u1.register(function(err, body){
         expect(err).to.equal(null);
         expect(u1.password).to.not.equal('1234');
         expect(u1.password).to.have.length(60);
         expect(u1._id).to.be.instanceof(Mongo.ObjectID);
+        body = JSON.parse(body);
+        expect(typeof body.id).to.equal('string');
         done();
       });
     });
@@ -50,9 +52,9 @@ describe('User', function(){
 
   describe('dupeCheck', function(){
     it('should not register a duplicate user', function(done){
-      var u1 = new User({email: 'sue@nomail.com', role:'host', password:'1234'});
+      var u1 = new User({email: 'max.vance+SUEEMAIL@gmail.com', role:'host', password:'1234'});
       u1.register(function(err){
-        expect(typeof err).to.equal('object'); //Errors are of type object
+        expect(typeof err).to.equal('string');
         done();
       });
     });
